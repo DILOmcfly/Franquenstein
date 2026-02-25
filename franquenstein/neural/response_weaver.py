@@ -118,13 +118,25 @@ class ResponseWeaver:
             return None
 
         if tone == "warm":
-            return f"Me alegra pensarlo así: {response}"
+            return random.choice([
+                f"Me gusta esta conexión: {response}",
+                f"Suena bien así: {response}",
+            ])
         if tone == "focused":
-            return f"En concreto: {response}"
+            return random.choice([
+                f"Punto clave: {response}",
+                f"En concreto: {response}",
+            ])
         if tone == "defensive":
-            return f"Con cautela: {response}"
+            return random.choice([
+                f"Con cautela: {response}",
+                f"Voy paso a paso: {response}",
+            ])
         if tone == "reflective":
-            return f"Si lo miro con calma: {response}"
+            return random.choice([
+                f"Si lo miro con calma: {response}",
+                f"Pensándolo bien: {response}",
+            ])
         return response
 
     # ─── Response generators ──────────────────────────────────

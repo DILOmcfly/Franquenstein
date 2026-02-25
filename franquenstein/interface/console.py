@@ -254,6 +254,7 @@ class ConsoleInterface:
             ("/curious", "Run one proactive curiosity cycle"),
             ("/brain", "Show neural graph stats"),
             ("/chem", "Show neurochemical state"),
+            ("/inner", "Show recent inner thoughts"),
             ("/help", "Show this help"),
             ("/quit", "Save and exit"),
         ]

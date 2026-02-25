@@ -15,6 +15,16 @@ import re
 import time
 from typing import Optional
 
+STOP_WORDS_ES = {
+    "el", "la", "los", "las", "un", "una", "unos", "unas",
+    "de", "del", "al", "a", "en", "por", "para", "con", "sin",
+    "que", "qué", "es", "son", "soy", "eres", "fue", "ser",
+    "y", "o", "pero", "si", "sí", "no", "me", "te", "se", "le",
+    "mi", "tu", "tú", "su", "yo", "él", "ella", "eso", "esto",
+    "como", "cómo", "más", "muy", "ya", "hay", "ha", "he", "lo",
+    "nos", "les", "este", "esta", "estos", "estas", "hola", "ok",
+}
+
 from franquenstein.config import (
     BEING_NAME,
     GROWTH_LEVELS,
@@ -96,7 +106,7 @@ class Being:
         )
 
         # Feed neural graph with co-occurring input concepts
-        words = self.memory._extract_key_words(input_text)
+        words = self._extract_meaningful_words(input_text)
         for w in words:
             self.neural.get_or_create_node(w, node_type="concept")
 
@@ -139,7 +149,7 @@ class Being:
             return learned
 
         # Neural graph reasoning (LLM-independent) before calling LLM.
-        words = self.memory._extract_key_words(input_text)
+        words = self._extract_meaningful_words(input_text)
         if words:
             graph_params = self.chemistry.get_graph_params()
             activation = self.neural.activate(words, params=graph_params)
@@ -381,7 +391,7 @@ class Being:
 
         Uses memory signals in a deterministic order before random child behavior.
         """
-        words = self.memory._extract_key_words(text)
+        words = self._extract_meaningful_words(text)
 
         # 1) Prefer best known concept with highest confidence
         best_concept = None
@@ -430,7 +440,7 @@ class Being:
 
     def _child_response(self, text: str) -> Optional[str]:
         """Level 2 behavior: associations, questions, past references."""
-        words = self.memory._extract_key_words(text)
+        words = self._extract_meaningful_words(text)
 
         # Try to make associations
         for word in words:
@@ -461,7 +471,7 @@ class Being:
 
     def _adolescent_response(self, text: str) -> Optional[str]:
         """Level 3+ behavior: basic reasoning, preferences."""
-        words = self.memory._extract_key_words(text)
+        words = self._extract_meaningful_words(text)
 
         # Express preferences based on emotional memory
         for word in words:
@@ -482,7 +492,7 @@ class Being:
 
     def _curious_response(self, text: str) -> str:
         """Fallback: express curiosity about the input."""
-        words = self.memory._extract_key_words(text)
+        words = self._extract_meaningful_words(text)
         if words:
             word = random.choice(words)
             return random.choice([
@@ -498,6 +508,12 @@ class Being:
         ])
 
     # ─── Helpers ─────────────────────────────────────────────
+
+
+    def _extract_meaningful_words(self, text: str) -> list[str]:
+        """Extract semantically meaningful words (stop-words filtered)."""
+        words = self.memory._extract_key_words(text)
+        return [w for w in words if w and w.lower() not in STOP_WORDS_ES and len(w) >= 3]
 
     def _detect_emotion(self, text: str) -> tuple[str, float]:
         """Detect the appropriate emotional response to input."""
@@ -535,6 +551,10 @@ class Being:
 
     def _detect_name_introduction(self, text: str) -> Optional[str]:
         """Try to detect if the user is telling us their name."""
+        EXCLUDED_NAMES = {"yo", "tú", "tu", "el", "ella", "ello", "nosotros", "vosotros",
+                          "ellos", "ellas", "usted", "ustedes", "nadie", "alguien",
+                          "todos", "quien", "quién", "cual", "cuál"}
+
         patterns = [
             r"(?:my name is|me llamo|i'?m|soy)\s+(\w+)",
             r"(?:call me|llámame)\s+(\w+)",
@@ -546,7 +566,7 @@ class Being:
                 name = match.group(1).capitalize()
                 # Filter out common non-name words
                 non_names = {"a", "the", "an", "just", "not", "very", "so", "here"}
-                if name.lower() not in non_names and len(name) > 1:
+                if name.lower() not in non_names and name.lower() not in EXCLUDED_NAMES and len(name) > 1:
                     return name
         return None
 
@@ -574,8 +594,8 @@ class Being:
         # Reinforce neural response pathways on positive feedback
         if score > 0:
             self.chemistry.modulate("feedback_positive")
-            input_words = self.memory._extract_key_words(self._current_input)
-            response_words = self.memory._extract_key_words(self._last_response)
+            input_words = self._extract_meaningful_words(self._current_input)
+            response_words = self._extract_meaningful_words(self._last_response)
             for iw in input_words:
                 for rw in response_words:
                     if iw != rw:

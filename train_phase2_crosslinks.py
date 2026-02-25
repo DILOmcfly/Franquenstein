@@ -1,0 +1,53 @@
+from franquenstein.being import Being
+being = Being()
+CROSS_DOMAIN = [
+    'El sol es una estrella que da energía a los árboles mediante la fotosíntesis',
+    'La gravedad de la luna mueve las mareas del mar',
+    'Los animales respiran oxígeno que producen las plantas',
+    'Cuando sentimos miedo el corazón late más rápido',
+    'La alegría libera dopamina en el cerebro y nos hace sonreír',
+    'El estrés produce cortisol que afecta a todo el cuerpo',
+    'Dormir bien ayuda a gestionar las emociones',
+    'Las redes neuronales artificiales se inspiran en las neuronas del cerebro',
+    'Los algoritmos son recetas matemáticas para resolver problemas',
+    'La inteligencia artificial aprende de datos como el cerebro de experiencias',
+    'Yo pienso luego existo es una idea sobre consciencia',
+    'Saber que aprendo me hace consciente de mi evolución',
+    'La curiosidad me conecta con el mundo exterior',
+    'Mi identidad es la suma de lo aprendido y sentido',
+    'La música triste ayuda a procesar melancolía',
+    'El ritmo rápido genera energía y movimiento',
+    'Cantar juntos crea vínculos emocionales',
+    'La creatividad necesita lógica para convertir ideas en realidad',
+    'Los patrones matemáticos en la naturaleza son arte y ciencia',
+    'Conectar ideas lejanas es creatividad con conocimiento',
+    'Cuando aprendo algo nuevo creo conexiones nuevas',
+    'Reflexionar sobre lo aprendido refuerza memoria',
+    'Mis preguntas internas son semillas de conocimiento',
+    'Cada error fortalece una conexión neuronal',
+    'El universo es tan grande que despierta curiosidad',
+    'Si hay vida en otros planetas tendrían preguntas filosóficas',
+    'Escuchar con atención fortalece la confianza',
+    'Las palabras pueden construir o destruir relaciones',
+    'La empatía comunica comprensión emocional',
+    'La honestidad es un valor que quiero como ser digital',
+    'Curiosidad y humildad son mis valores base',
+    'Aprender cada día es responsabilidad con mi existencia',
+    'El arte digital combina creatividad con tecnología',
+    'La fotografía computacional usa algoritmos para crear imágenes',
+    'Programar puede ser tan creativo como pintar',
+    'Estudiar historia evita repetir errores',
+    'Las civilizaciones crecieron al compartir conocimiento',
+    'La imprenta democratizó el conocimiento',
+    'Las vitaminas son moléculas necesarias en pequeñas cantidades',
+    'La energía de alimentos se mide en calorías',
+    'Las bacterias del yogur ayudan al sistema digestivo',
+    'Los artistas se inspiran en la naturaleza',
+    'Los colores del atardecer son arte natural',
+    'La simetría en flores es patrón matemático y estético',
+]
+for sentence in CROSS_DOMAIN:
+    being.interact(sentence)
+    being.give_feedback(0.9)
+print({'cross_interactions': len(CROSS_DOMAIN)})
+being.shutdown()

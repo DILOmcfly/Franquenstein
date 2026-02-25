@@ -50,3 +50,7 @@ VOICE_ENABLED = True
 VOICE_COOLDOWN_SECONDS = 120
 VOICE_TRIGGER_CURIOSITY = True
 VOICE_TRIGGER_LEVELUP = True
+VOICE_TRIGGER_NORMAL_RESPONSE = True
+
+# Voice backend script path (override-safe across environments)
+VOICE_SCRIPT = "/home/dfara/.openclaw/workspace/scripts/kitten_speak.py"
