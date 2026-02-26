@@ -23,6 +23,7 @@ STOP_WORDS_ES = {
     "mi", "tu", "tú", "su", "yo", "él", "ella", "eso", "esto",
     "como", "cómo", "más", "muy", "ya", "hay", "ha", "he", "lo",
     "nos", "les", "este", "esta", "estos", "estas", "hola", "ok",
+    "sobre", "cuentame", "cuéntame", "dime", "sabes", "algo",
 }
 
 from franquenstein.config import (

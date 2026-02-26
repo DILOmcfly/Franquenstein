@@ -17,6 +17,8 @@ from typing import Optional
 
 from franquenstein.neural.neural_graph import ActivationResult, Node
 
+_NOISE_WORDS = {"paso", "gusta", "sobre", "algo", "relación", "relacion", "base", "conecta"}
+
 
 # ─── Response templates ──────────────────────────────────────
 
@@ -117,6 +119,10 @@ class ResponseWeaver:
         if not response:
             return None
 
+        response = self._enforce_quality(response, concept_nodes)
+        if not response:
+            return None
+
         if tone == "warm":
             return random.choice([
                 f"Me gusta esta conexión: {response}",
@@ -187,13 +193,33 @@ class ResponseWeaver:
         connections = self.graph.get_strongest_connections(node.label, limit=3)
 
         if connections:
-            detail_parts = [c[0] for c in connections[:2]]
+            detail_parts = [c[0] for c in connections if c[0].lower() not in _NOISE_WORDS][:2]
+            if not detail_parts:
+                detail_parts = [c[0] for c in connections[:2]]
             detail = f"Está conectado con {', '.join(detail_parts)}."
             template = random.choice(_TEMPLATES["explanation"])
             return template.format(concept=node.label, detail=detail)
 
         template = random.choice(_TEMPLATES["uncertainty"])
         return template.format(concept=node.label)
+
+
+    @staticmethod
+    def _response_quality_ok(response: str) -> bool:
+        words = [w.strip(".,:;!?¿¡").lower() for w in response.split()]
+        meaningful = [w for w in words if len(w) >= 4 and w not in _NOISE_WORDS]
+        return len(set(meaningful)) >= 2
+
+    def _enforce_quality(self, response: str, nodes: list[Node]) -> Optional[str]:
+        if self._response_quality_ok(response):
+            return response
+        # Fallback to concise semantically grounded statement from top nodes
+        labels = [n.label for n in nodes[:2] if n.label and len(n.label) >= 3]
+        if len(labels) >= 2:
+            return f"{labels[0]} se conecta con {labels[1]} en mi memoria."
+        if len(labels) == 1:
+            return f"{labels[0]} es una idea activa en mi red."
+        return None
 
     # ─── Input classifiers ────────────────────────────────────
 
